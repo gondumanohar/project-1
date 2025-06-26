@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classic Recipe Collection</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lora:wght@400;600&family=Montserrat:wght@300;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --cream: #F8F4E9;
+            --brown: #5C4D3D;
+            --gold: #C5A880;
+            --dark-brown: #3A2E26;
+            --light-gray: #E5E5E5;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Lora', serif;
+            background-color: var(--cream);
+            color: var(--dark-brown);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(rgba(92, 77, 61, 0.8), rgba(92, 77, 61, 0.8)), 
+                        url('https://images.unsplash.com/photo-1490645935967-10de6ba17061?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover no-repeat;
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+            margin-bottom: 3rem;
+            border-bottom: 8px solid var(--gold);
+        }
+
+        header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.2rem;
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+        }
+
+        header p {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+
+        /* Filter Styles */
+        .filters {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-bottom: 3rem;
+        }
+
+        .filter-btn {
+            padding: 0.7rem 1.5rem;
+            font-size: 0.95rem;
+            background: transparent;
+            border: 2px solid var(--gold);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+            color: var(--brown);
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--gold);
+            color: white;
+        }
+
+        /* Recipe Cards */
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2.5rem;
+            margin-bottom: 4rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 6px;
+            overflow: hidden;
+            transition: var(--transition);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            border: 1px solid var(--light-gray);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-img-container {
+            height: 220px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .card:hover .card-img {
+            transform: scale(1.03);
+        }
+
+        .card-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--gold);
+            color: white;
+            padding: 0.3rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+        }
+
+        .card-content {
+            padding: 1.8rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-content h2 {
+            font-family: 'Playfair Display', serif;
+            color: var(--brown);
+            margin-bottom: 0.8rem;
+            font-size: 1.6rem;
+        }
+
+        .description {
+            font-size: 0.95rem;
+            margin-bottom: 1.2rem;
+            color: var(--brown);
+            flex: 1;
+        }
+
+        .meta-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            color: var(--brown);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .meta-item i {
+            color: var(--gold);
+        }
+
+        .toggle-btn {
+            background: var(--gold);
+            color: white;
+            border: none;
+            padding: 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 1.5rem;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+            width: 100%;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.85rem;
+        }
+
+        .toggle-btn:hover {
+            background: var(--brown);
+        }
+
+        .details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            background: var(--cream);
+            margin: 0 -1.8rem -1.8rem;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        .details.show {
+            max-height: 2000px;
+            padding: 1.8rem;
+        }
+
+        .ingredients, .instructions {
+            margin-bottom: 1.5rem;
+        }
+
+        .ingredients h3, .instructions h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--brown);
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--gold);
+        }
+
+        .ingredients ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .ingredients li {
+            padding: 0.4rem 0;
+            display: flex;
+            align-items: flex-start;
+            border-bottom: 1px dotted #ddd;
+        }
+
+        .ingredients li:last-child {
+            border-bottom: none;
+        }
+
+        .ingredients li::before {
+            content: "•";
+            color: var(--gold);
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-right: 0.5rem;
+        }
+
+        .instructions ol {
+            padding-left: 1.2rem;
+        }
+
+        .instructions li {
+            padding: 0.4rem 0;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            margin-top: 1rem;
+            color: var(--gold);
+            font-size: 0.9rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--brown);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 1.5rem 0;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--gold);
+        }
+
+        .copyright {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 1.5rem;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* Responsive Design */
+        @media screen and (max-width: 992px) {
+            .cards-container {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+            
+            header h1 {
+                font-size: 2.8rem;
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            .container {
+                padding: 0 1.5rem;
+            }
+            
+            header {
+                padding: 3rem 0;
+            }
+            
+            header h1 {
+                font-size: 2.4rem;
+            }
+            
+            .cards-container {
+                grid-template-columns: 1fr;
+                max-width: 600px;
+                margin: 0 auto;
+            }
+        }
+
+        @media screen and (max-width: 576px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            header p {
+                font-size: 1rem;
+            }
+            
+            .filter-btn {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <h1>Classic Recipe Collection</h1>
+            <p>Timeless recipes with modern techniques. Perfect for home chefs who appreciate tradition.</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">All Recipes</button>
+            <button class="filter-btn" data-filter="italian">Italian</button>
+            <button class="filter-btn" data-filter="french">French</button>
+            <button class="filter-btn" data-filter="american">American</button>
+            <button class="filter-btn" data-filter="dessert">Desserts</button>
+        </div>
+
+        <div class="cards-container">
+            <!-- Recipe 1 -->
+            <div class="card" data-cuisine="italian">
+                <div class="card-img-container">
+                    <img src="https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Pasta Carbonara" class="card-img">
+                    <span class="card-badge">Italian</span>
+                </div>
+                <div class="card-content">
+                    <h2>Spaghetti Carbonara</h2>
+                    <p class="description">The authentic Roman pasta dish with creamy egg sauce, pancetta, and pecorino cheese. No cream allowed in this classic.</p>
+                    <div class="meta-info">
+                        <span class="meta-item"><i class="far fa-clock"></i> 25 mins</span>
+                        <span class="meta-item"><i class="fas fa-utensils"></i> 4 servings</span>
+                        <span class="meta-item"><i class="fas fa-star"></i> 4.7</span>
+                    </div>
+                    <button class="toggle-btn" onclick="toggleDetails(this)">
+                        <i class="fas fa-book-open"></i> View Recipe
+                    </button>
+                    <div class="details">
+                        <div class="ingredients">
+                            <h3>Ingredients</h3>
+                            <ul>
+                                <li>400g spaghetti</li>
+                                <li>200g pancetta or guanciale, diced</li>
+                                <li>4 large eggs</li>
+                                <li>50g pecorino romano, grated</li>
+                                <li>50g parmesan, grated</li>
+                                <li>Freshly ground black pepper</li>
+                                <li>Salt</li>
+                            </ul>
+                        </div>
+                        <div class="instructions">
+                            <h3>Instructions</h3>
+                            <ol>
+                                <li>Bring a large pot of salted water to boil and cook spaghetti al dente.</li>
+                                <li>While pasta cooks, fry pancetta until crispy in a large pan.</li>
+                                <li>In a bowl, whisk eggs with grated cheeses and plenty of black pepper.</li>
+                                <li>Drain pasta, reserving some cooking water, and immediately add to pancetta.</li>
+                                <li>Remove from heat and quickly stir in egg mixture, creating a creamy sauce.</li>
+                                <li>Add pasta water as needed to loosen the sauce.</li>
+                                <li>Serve immediately with extra cheese and pepper.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recipe 2 -->
+            <div class="card" data-cuisine="french">
+                <div class="card-img-container">
+                    <img src="https://images.unsplash.com/photo-1601050690597-df0568f70950?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Coq au Vin" class="card-img">
+                    <span class="card-badge">French</span>
+                </div>
+                <div class="card-content">
+                    <h2>Coq au Vin</h2>
+                    <p class="description">The classic French chicken stew braised in red wine with mushrooms, onions, and bacon. A rustic masterpiece.</p>
+                    <div class="meta-info">
+                        <span class="meta-item"><i class="far fa-clock"></i> 2.5 hrs</span>
+                        <span class="meta-item"><i class="fas fa-utensils"></i> 6 servings</span>
+                        <span class="meta-item"><i class="fas fa-star"></i> 4.9</span>
+                    </div>
+                    <button class="toggle-btn" onclick="toggleDetails(this)">
+                        <i class="fas fa-book-open"></i> View Recipe
+                    </button>
+                    <div class="details">
+                        <div class="ingredients">
+                            <h3>Ingredients</h3>
+                            <ul>
+                                <li>1 whole chicken, cut into pieces</li>
+                                <li>200g bacon, diced</li>
+                                <li>20 pearl onions</li>
+                                <li>300g mushrooms, quartered</li>
+                                <li>750ml red wine (Burgundy)</li>
+                                <li>2 cups chicken stock</li>
+                                <li>3 tbsp brandy</li>
+                                <li>3 garlic cloves, minced</li>
+                                <li>2 tbsp tomato paste</li>
+                                <li>Fresh thyme and parsley</li>
+                                <li>Salt and pepper</li>
+                            </ul>
+                        </div>
+                        <div class="instructions">
+                            <h3>Instructions</h3>
+                            <ol>
+                                <li>Brown chicken pieces in batches and set aside.</li>
+                                <li>Cook bacon until crisp, then sauté onions and mushrooms.</li>
+                                <li>Deglaze with brandy, then add wine, stock, tomato paste and herbs.</li>
+                                <li>Return chicken to pot, cover and simmer for 1.5 hours.</li>
+                                <li>Remove chicken and reduce sauce until thickened.</li>
+                                <li>Return chicken to sauce and serve with crusty bread.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recipe 3 -->
+            <div class="card" data-cuisine="american">
+                <div class="card-img-container">
+                    <img src="https://images.unsplash.com/photo-1544025162-d76694265947?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="BBQ Ribs" class="card-img">
+                    <span class="card-badge">American</span>
+                </div>
+                <div class="card-content">
+                    <h2>Slow-Cooked BBQ Ribs</h2>
+                    <p class="description">Fall-off-the-bone tender ribs with homemade barbecue sauce. Smoked low and slow for maximum flavor.</p>
+                    <div class="meta-info">
+                        <span class="meta-item"><i class="far fa-clock"></i> 5 hrs</span>
+                        <span class="meta-item"><i class="fas fa-utensils"></i> 4 servings</span>
+                        <span class="meta-item"><i class="fas fa-star"></i> 4.8</span>
+                    </div>
+                    <button class="toggle-btn" onclick="toggleDetails(this)">
+                        <i class="fas fa-book-open"></i> View Recipe
+                    </button>
+                    <div class="details">
+                        <div class="ingredients">
+                            <h3>Ingredients</h3>
+                            <ul>
+                                <li>2 racks baby back ribs</li>
+                                <li>1/4 cup brown sugar</li>
+                                <li>2 tbsp paprika</li>
+                                <li>1 tbsp garlic powder</li>
+                                <li>1 tbsp onion powder</li>
+                                <li>1 tbsp salt</li>
+                                <li>1 tsp black pepper</li>
+                                <li>1 tsp cayenne pepper</li>
+                                <li>2 cups barbecue sauce</li>
+                                <li>1/2 cup apple cider vinegar</li>
+                                <li>1/4 cup honey</li>
+                            </ul>
+                        </div>
+                        <div class="instructions">
+                            <h3>Instructions</h3>
+                            <ol>
+                                <li>Remove membrane from back of ribs and pat dry.</li>
+                                <li>Mix dry rub ingredients and coat ribs generously.</li>
+                                <li>Let ribs sit with rub for 1 hour at room temperature.</li>
+                                <li>Preheat smoker or oven to 120°C (250°F).</li>
+                                <li>Cook ribs for 3 hours, then wrap in foil with vinegar and honey.</li>
+                                <li>Cook 2 more hours until tender.</li>
+                                <li>Brush with barbecue sauce and broil for 5 minutes.</li>
+                                <li>Rest 10 minutes before serving.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recipe 4 -->
+            <div class="card" data-cuisine="dessert">
+                <div class="card-img-container">
+                    <img src="https://images.unsplash.com/photo-1562440499-64c9a111f713?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Chocolate Soufflé" class="card-img">
+                    <span class="card-badge">Dessert</span>
+                </div>
+                <div class="card-content">
+                    <h2>Chocolate Soufflé</h2>
+                    <p class="description">Light as air yet rich in chocolate flavor. The perfect impressive dessert that's easier than you think.</p>
+                    <div class="meta-info">
+                        <span class="meta-item"><i class="far fa-clock"></i> 45 mins</span>
+                        <span class="meta-item"><i class="fas fa-utensils"></i> 6 servings</span>
+                        <span class="meta-item"><i class="fas fa-star"></i> 4.6</span>
+                    </div>
+                    <button class="toggle-btn" onclick="toggleDetails(this)">
+                        <i class="fas fa-book-open"></i> View Recipe
+                    </button>
+                    <div class="details">
+                        <div class="ingredients">
+                            <h3>Ingredients</h3>
+                            <ul>
+                                <li>150g dark chocolate (70%)</li>
+                                <li>30g butter</li>
+                                <li>3 eggs, separated</li>
+                                <li>60g sugar</li>
+                                <li>1 tbsp flour</li>
+                                <li>Pinch of salt</li>
+                                <li>1 tsp vanilla extract</li>
+                                <li>Powdered sugar for dusting</li>
+                            </ul>
+                        </div>
+                        <div class="instructions">
+                            <h3>Instructions</h3>
+                            <ol>
+                                <li>Preheat oven to 190°C (375°F) and butter 6 ramekins.</li>
+                                <li>Melt chocolate and butter together over double boiler.</li>
+                                <li>Whisk egg yolks with half the sugar until pale.</li>
+                                <li>Beat egg whites with remaining sugar to stiff peaks.</li>
+                                <li>Fold chocolate into yolks, then flour and vanilla.</li>
+                                <li>Gently fold in egg whites in two batches.</li>
+                                <li>Divide among ramekins and smooth tops.</li>
+                                <li>Bake for 12-15 minutes until risen but slightly jiggly.</li>
+                                <li>Serve immediately with powdered sugar.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recipe 5 -->
+            <div class="card" data-cuisine="italian">
+                <div class="card-img-container">
+                    <img src="https://images.unsplash.com/photo-1572695157366-5e585ab2b69f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Risotto" class="card-img">
+                    <span class="card-badge">Italian</span>
+                </div>
+                <div class="card-content">
+                    <h2>Mushroom Risotto</h2>
+                    <p class="description">Creamy Arborio rice cooked slowly with mushrooms, white wine, and parmesan. The ultimate comfort food.</p>
+                    <div class="meta-info">
+                        <span class="meta-item"><i class="far fa-clock"></i> 40 mins</span>
+                        <span class="meta-item"><i class="fas fa-utensils"></i> 4 servings</span>
+                        <span class="meta-item"><i class="fas fa-star"></i> 4.5</span>
+                    </div>
+                    <button class="toggle-btn" onclick="toggleDetails(this)">
+                        <i class="fas fa-book-open"></i> View Recipe
+                    </button>
+                    <div class="details">
+                        <div class="ingredients">
+                            <h3>Ingredients</h3>
+                            <ul>
+                                <li>300g Arborio rice</li>
+                                <li>200g mixed mushrooms</li>
+                                <li>1 onion, finely chopped</li>
+                                <li>2 garlic cloves, minced</li>
+                                <li>1 liter chicken or vegetable stock</li>
+                                <li>150ml dry white wine</li>
+                                <li>50g butter</li>
+                                <li>50g parmesan, grated</li>
+                                <li>2 tbsp olive oil</li>
+                                <li>Salt and pepper</li>
+                                <li>Fresh parsley</li>
+                            </ul>
+                        </div>
+                        <div class="instructions">
+                            <h3>Instructions</h3>
+                            <ol>
+                                <li>Heat stock and keep warm on low heat.</li>
+                                <li>Sauté mushrooms in half the butter and set aside.</li>
+                                <li>Cook onion and garlic in olive oil until soft.</li>
+                                <li>Add rice and toast for 2 minutes until translucent.</li>
+                                <li>Deglaze with wine and cook until absorbed.</li>
+                                <li>Add stock one ladle at a time, stirring constantly.</li>
+                                <li>When rice is al dente (about 18 minutes), stir in mushrooms, remaining butter and parmesan.</li>
+                                <li>Season and serve with extra parmesan and parsley.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recipe 6 -->
+            <div class="card" data-cuisine="french">
+                <div class="card-img-container">
+                    <img src="https://images.unsplash.com/photo-1515442261605-65987783cb6a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Croissants" class="card-img">
+                    <span class="card-badge">French</span>
+                </div>
+                <div class="card-content">
+                    <h2>Homemade Croissants</h2>
+                    <p class="description">Flaky, buttery layers with a crisp exterior and soft interior. A weekend project worth every minute.</p>
+                    <div class="meta-info">
+                        <span class="meta-item"><i class="far fa-clock"></i> 12 hrs</span>
+                        <span class="meta-item"><i class="fas fa-utensils"></i> 12 croissants</span>
+                        <span class="meta-item"><i class="fas fa-star"></i> 4.9</span>
+                    </div>
+                    <button class="toggle-btn" onclick="toggleDetails(this)">
+                        <i class="fas fa-book-open"></i> View Recipe
+                    </button>
+                    <div class="details">
+                        <div class="ingredients">
+                            <h3>Ingredients</h3>
+                            <ul>
+                                <li>500g strong bread flour</li>
+                                <li>10g salt</li>
+                                <li>50g sugar</li>
+                                <li>10g instant yeast</li>
+                                <li>280ml cold milk</li>
+                                <li>250g cold butter</li>
+                                <li>1 egg for egg wash</li>
+                            </ul>
+                        </div>
+                        <div class="instructions">
+                            <h3>Instructions</h3>
+                            <ol>
+                                <li>Mix flour, salt, sugar and yeast in a bowl.</li>
+                                <li>Add milk and mix to a shaggy dough.</li>
+                                <li>Knead for 5 minutes until smooth.</li>
+                                <li>Refrigerate dough for 1 hour.</li>
+                                <li>Roll out dough and encase butter block.</li>
+                                <li>Perform 3 folds with 30 minute rests between.</li>
+                                <li>Refrigerate overnight.</li>
+                                <li>Roll out, cut into triangles and shape croissants.</li>
+                                <li>Proof for 2 hours until doubled in size.</li>
+                                <li>Bake at 200°C (400°F) for 15-18 minutes until golden.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <h3>Classic Recipe Collection</h3>
+            <div class="footer-links">
+                <a href="#">About</a>
+                <a href="#">Contact</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Use</a>
+            </div>
+            <p class="copyright">© 2023 Classic Recipe Collection. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Toggle recipe details
+        function toggleDetails(button) {
+            const details = button.nextElementSibling;
+            details.classList.toggle('show');
+            
+            if (details.classList.contains('show')) {
+                button.innerHTML = '<i class="fas fa-book"></i> Hide Recipe';
+            } else {
+                button.innerHTML = '<i class="fas fa-book-open"></i> View Recipe';
+            }
+        }
+
+        // Filter recipes by cuisine
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active class from all buttons
+                document.querySelectorAll('.filter-btn').forEach(b => {
+                    b.classList.remove('active');
+                });
+                
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                const filter = this.dataset.filter;
+                const cards = document.querySelectorAll('.card');
+                
+                cards.forEach(card => {
+                    if (filter === 'all' || card.dataset.cuisine === filter) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
